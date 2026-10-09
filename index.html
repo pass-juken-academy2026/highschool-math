@@ -21,8 +21,71 @@
 <section class="card" style="margin-top:16px"><h2>このサイトについて</h2><p>ここは学習サイトの初期版です。今後、単元別の解説・演習・復習機能を追加していきます。問題は学習用に作成したオリジナル問題です。</p><p class="note">学習のコツ：答えだけでなく「なぜその答えになるか」を説明できるようにしよう。</p><p><a href="https://github.com/pass-juken-academy2026/highschool-math">このサイトのGitHubリポジトリ</a></p></section>
 
 <section class="card" style="margin-top:16px" id="extra-math"><span class="pill">追加演習</span><h2 style="margin-top:10px">単元別チェック</h2><div id="math-topic" class="pill"></div><h3 id="math-question" style="margin-top:12px"></h3><div id="math-choices" class="choices"></div><div id="math-feedback" role="status" aria-live="polite" class="note">選択肢を選んで採点してください。</div><div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:14px"><button type="button" id="math-check">解答する</button><button type="button" id="math-next">次の問題</button></div><p id="math-progress" class="muted"></p></section>
+
+<section class="card" id="unit-library" style="margin-top:16px">
+  <span class="pill">単元別まとめ</span><h2 style="margin-top:10px">公式・使える条件・解法のコツ</h2>
+  <p class="muted">公式は「形」だけでなく、いつ使えるか・何を求める式かもセットで確認しよう。</p>
+  <label for="unit-select"><strong>単元を選ぶ</strong></label>
+  <select id="unit-select" style="display:block;width:100%;padding:12px;border:1px solid var(--line);border-radius:10px;margin:8px 0 14px;font:inherit">
+    <option value="quadratic">数学I：二次関数</option><option value="trig">数学I：三角比</option><option value="prob">数学A：場合の数・確率</option><option value="sequence">数学B：数列</option><option value="vector">数学C：ベクトル</option><option value="diff">数学II・III：微分</option><option value="log">数学II：対数</option>
+  </select>
+  <div id="unit-content" class="note" aria-live="polite"></div>
+</section>
+<section class="card" id="practice-area" style="margin-top:16px">
+  <span class="pill">演習トレーニング</span><h2 style="margin-top:10px">単元別・ランダム演習</h2>
+  <p class="muted">全問オリジナル。解答すると、正誤だけでなく考え方と間違えやすい点も表示します。</p>
+  <div style="display:flex;gap:10px;flex-wrap:wrap"><label style="flex:1;min-width:200px" for="practice-unit">出題範囲<select id="practice-unit" style="display:block;width:100%;padding:10px;border:1px solid var(--line);border-radius:10px;margin-top:5px;font:inherit"><option value="all">全単元</option><option value="quadratic">二次関数</option><option value="trig">三角比</option><option value="prob">場合の数・確率</option><option value="sequence">数列</option><option value="vector">ベクトル</option><option value="diff">微分</option><option value="log">対数</option></select></label></div>
+  <p id="practice-count" class="muted"></p><h3 id="practice-question"></h3><div id="practice-choices" class="choices"></div>
+  <div id="practice-feedback" class="note" role="status" aria-live="polite">範囲を選んで、選択肢を選び「採点する」を押そう。</div>
+  <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px"><button type="button" id="practice-check">採点する</button><button type="button" id="practice-next">次の問題</button><button type="button" id="practice-reset">成績リセット</button></div>
+  <p id="practice-score" class="muted">正解 0 / 解答 0</p>
+</section>
 </main><footer>PASS JUKEN ACADEMY · 学びを一歩ずつ</footer>
 <script>
 const answer=0;const explanation="平方完成された形 y=a(x-p)²+q の頂点は (p,q) です。";const feedback=document.getElementById('feedback');document.querySelectorAll('[data-choice]').forEach(btn=>btn.addEventListener('click',()=>{const picked=Number(btn.dataset.choice);feedback.textContent=(picked===answer?'正解！ ':'不正解。 ')+explanation;feedback.style.background=picked===answer?'#e9f8ee':'#fff3e8';}));document.getElementById('retry').addEventListener('click',()=>{feedback.textContent='選択肢を選ぶと、正誤と解説が表示されます。';feedback.style.background='#eef4ff';});
+</script>
+
+<script>
+(function(){
+const units={
+quadratic:{title:"二次関数",body:"<h3>基本公式</h3><p>y=a(x-p)²+q の頂点は (p,q)。a>0 なら下に凸、a<0 なら上に凸。</p><h3>使える条件・確認点</h3><p>最大・最小を求めるときは、定義域の端点と頂点の位置を必ず確認する。定義域がある問題では、頂点だけ見て答えを決めない。</p><h3>解法のコツ</h3><p>一般形 ax²+bx+c は平方完成して頂点形式にする。軸は x=-b/(2a)。"},
+trig:{title:"三角比",body:"<h3>基本公式</h3><p>sinθ=対辺/斜辺、cosθ=隣辺/斜辺、tanθ=対辺/隣辺。</p><h3>使える条件・確認点</h3><p>直角三角形で辺の比として使う。三角形の角度・辺の位置を図に書き、θから見た対辺・隣辺を判断する。</p><h3>解法のコツ</h3><p>30°・45°・60°の値は図とセットで覚える。tanθ=sinθ/cosθ は cosθ≠0 の範囲で使う。"},
+prob:{title:"場合の数・確率",body:"<h3>基本公式</h3><p>確率=条件に合う場合の数/すべての場合の数（同様に確からしい場合）。順列 nPr=n!/(n-r)!、組合せ nCr=n!/{r!(n-r)!}。</p><h3>使える条件・確認点</h3><p>確率の分数公式は、各結果が同様に確からしいときに使う。順番を区別するなら順列、区別しないなら組合せ。</p><h3>解法のコツ</h3><p>「少なくとも」は余事象を使うと計算が短くなることがある。"},
+sequence:{title:"数列",body:"<h3>基本公式</h3><p>等差数列 aₙ=a₁+(n-1)d、Sₙ=n(a₁+aₙ)/2。等比数列 aₙ=a₁rⁿ⁻¹。</p><h3>使える条件・確認点</h3><p>等差は隣り合う差が一定、等比は隣り合う項の比が一定（分母が0でないことを確認）。</p><h3>解法のコツ</h3><p>まず差 aₙ₊₁-aₙ、または比 aₙ₊₁/aₙ を調べる。初項と公差・公比を特定してから代入する。"},
+vector:{title:"ベクトル",body:"<h3>基本公式</h3><p>ベクトル a=(a₁,a₂)、b=(b₁,b₂) の内積は a・b=a₁b₁+a₂b₂。</p><h3>使える条件・確認点</h3><p>a・b=|a||b|cosθ。垂直なら内積は0。成分計算では対応する成分同士を掛けて足す。</p><h3>解法のコツ</h3><p>図形問題は、基準となる点を決めて位置ベクトルで表すと整理しやすい。"},
+diff:{title:"微分",body:"<h3>基本公式</h3><p>(xⁿ)'=nxⁿ⁻¹。接線の傾きは導関数 f'(a)、点 (a,f(a)) での接線は y-f(a)=f'(a)(x-a)。</p><h3>使える条件・確認点</h3><p>導関数で増減を調べる。区間で最大・最小を求める場合は、区間内の臨界点と端点の値を比較する。</p><h3>解法のコツ</h3><p>f'(x)=0 の解を出しただけで最大・最小と決めず、符号変化や値の比較を行う。"},
+log:{title:"対数",body:"<h3>基本公式</h3><p>logₐ(MN)=logₐM+logₐN、logₐ(M/N)=logₐM-logₐN、logₐ(Mʳ)=r logₐM。</p><h3>使える条件</h3><p>底 a>0、a≠1、真数 M>0 が必要。底が0と1の間か1より大きいかで、指数・対数関数の増減が変わる。</p><h3>解法のコツ</h3><p>対数の式変形の前に、真数条件を確認する。条件を最後に解の範囲へ反映させる。"}
+};
+const sel=document.getElementById('unit-select'), box=document.getElementById('unit-content');
+function showUnit(){box.innerHTML="<h3>"+units[sel.value].title+"</h3>"+units[sel.value].body;}
+sel.addEventListener('change',showUnit);showUnit();
+const qs=[
+{u:"quadratic",q:"y=2(x-3)²+1 の頂点は？",c:["(−3,1)","(3,1)","(3,−1)","(1,3)"],a:1,e:"y=a(x-p)²+q の頂点は (p,q)。ここでは p=3、q=1。"},
+{u:"quadratic",q:"y=x²−6x+5 の軸は？",c:["x=−3","x=3","x=6","x=−6"],a:1,e:"軸は x=−b/(2a)。a=1、b=−6 より x=3。"},
+{u:"quadratic",q:"y=−2x²+4x+1 はどちら向きに開く？",c:["上に凸","下に凸","直線になる","判断できない"],a:0,e:"二次関数 ax²+bx+c は a<0 のとき上に凸。"},
+{u:"trig",q:"直角三角形で、θに対する対辺が3、斜辺が5。sinθは？",c:["3/5","4/5","5/3","3/4"],a:0,e:"sinθ=対辺/斜辺=3/5。"},
+{u:"trig",q:"tanθ はどの比？",c:["斜辺/対辺","隣辺/斜辺","対辺/隣辺","隣辺/対辺"],a:2,e:"tanθ=対辺/隣辺。角θから見た辺を確認しよう。"},
+{u:"prob",q:"5人から委員長と副委員長を1人ずつ選ぶ方法は？",c:["10通り","20通り","25通り","120通り"],a:1,e:"役職が違うので順番を区別する。5×4=20通り。"},
+{u:"prob",q:"サイコロ1個を投げる。偶数が出る確率は？",c:["1/6","1/3","1/2","2/3"],a:2,e:"偶数は2,4,6の3通り。全6通りなので3/6=1/2。"},
+{u:"prob",q:"少なくとも1回成功する確率を求めるとき、便利な考え方は？",c:["平均値だけ求める","余事象を使う","必ず順列にする","全事象を無視する"],a:1,e:"『少なくとも1回』は『1回も起こらない』の余事象を使うと簡単な場合が多い。"},
+{u:"sequence",q:"初項4、公差3の等差数列の第5項は？",c:["12","15","16","19"],a:2,e:"a₅=4+(5−1)×3=16。"},
+{u:"sequence",q:"数列 2, 6, 18, 54,… の公比は？",c:["2","3","4","6"],a:1,e:"隣り合う項の比は6/2=3、18/6=3。"},
+{u:"vector",q:"a=(1,2)、b=(3,4) の内積は？",c:["7","10","11","14"],a:2,e:"a・b=1×3+2×4=11。"},
+{u:"vector",q:"2つのベクトルが垂直なら、内積は？",c:["1","−1","0","長さの積"],a:2,e:"a・b=|a||b|cosθ。垂直なら θ=90° で cosθ=0。"},
+{u:"diff",q:"f(x)=x³ の導関数は？",c:["x²","2x","3x²","3x"],a:2,e:"べき乗の微分 (xⁿ)'=nxⁿ⁻¹ より 3x²。"},
+{u:"diff",q:"f(x)=x² の x=2 における接線の傾きは？",c:["2","4","6","8"],a:1,e:"f'(x)=2x なので f'(2)=4。"},
+{u:"log",q:"log₂8 の値は？",c:["2","3","4","8"],a:1,e:"2³=8 なので log₂8=3。"},
+{u:"log",q:"log₃(x−1) を実数で定義するための条件は？",c:["x≥1","x>1","x<1","x≠1"],a:1,e:"真数は正なので x−1>0、つまり x>1。"}
+];
+let current=null,picked=null,answered=false,correct=0,total=0,queue=[];
+const pu=document.getElementById('practice-unit'),pq=document.getElementById('practice-question'),pc=document.getElementById('practice-choices'),pf=document.getElementById('practice-feedback'),ps=document.getElementById('practice-score'),pcount=document.getElementById('practice-count');
+function newQueue(){const key=pu.value;queue=qs.filter(x=>key==='all'||x.u===key);for(let i=queue.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[queue[i],queue[j]]=[queue[j],queue[i]];}}
+function next(){if(!queue.length)newQueue();current=queue.pop();picked=null;answered=false;pq.textContent=current.q;pc.innerHTML="";current.c.forEach((v,i)=>{const b=document.createElement('button');b.type='button';b.textContent=String.fromCharCode(65+i)+". "+v;b.addEventListener('click',()=>{if(answered)return;picked=i;pc.querySelectorAll('button').forEach(x=>x.style.outline='');b.style.outline='3px solid #265bd6';});pc.appendChild(b);});pf.textContent="選択肢を選んで「採点する」を押そう。";pcount.textContent="今回の範囲："+(pu.options[pu.selectedIndex].text)+" · 残り "+queue.length+" 問（1周したらシャッフル）";}
+document.getElementById('practice-check').addEventListener('click',()=>{if(answered)return;if(picked===null){pf.textContent="先に選択肢を選んでね。";return;}answered=true;total++;if(picked===current.a)correct++;pf.innerHTML=(picked===current.a?"<strong>正解！</strong> ":"<strong>不正解。</strong> ")+current.e;pf.style.background=picked===current.a?"#e9f8ee":"#fff3e8";ps.textContent="正解 "+correct+" / 解答 "+total+"（正答率 "+Math.round(correct/total*100)+"%）";});
+document.getElementById('practice-next').addEventListener('click',next);
+pu.addEventListener('change',()=>{newQueue();next();});
+document.getElementById('practice-reset').addEventListener('click',()=>{correct=0;total=0;ps.textContent="正解 0 / 解答 0";newQueue();next();});
+newQueue();next();
+})();
 </script>
 </body></html>
