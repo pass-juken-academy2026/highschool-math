@@ -37,8 +37,8 @@
   <div style="display:flex;gap:10px;flex-wrap:wrap"><label style="flex:1;min-width:200px" for="practice-unit">出題範囲<select id="practice-unit" style="display:block;width:100%;padding:10px;border:1px solid var(--line);border-radius:10px;margin-top:5px;font:inherit"><option value="all">全単元</option><option value="quadratic">二次関数</option><option value="trig">三角比</option><option value="prob">場合の数・確率</option><option value="sequence">数列</option><option value="vector">ベクトル</option><option value="diff">微分</option><option value="log">対数</option></select></label></div>
   <p id="practice-count" class="muted"></p><h3 id="practice-question"></h3><div id="practice-choices" class="choices"></div>
   <div id="practice-feedback" class="note" role="status" aria-live="polite">範囲を選んで、選択肢を選び「採点する」を押そう。</div>
-  <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px"><button type="button" id="practice-check">採点する</button><button type="button" id="practice-next">次の問題</button><button type="button" id="practice-reset">成績リセット</button></div>
-  <p id="practice-score" class="muted">正解 0 / 解答 0</p>
+  <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px"><button type="button" id="practice-check">採点する</button><button type="button" id="practice-next">次の問題</button><button type="button" id="practice-reset">成績リセット</button><button type="button" id="practice-review">間違いを復習</button></div>
+  <p id="practice-score" class="muted">正解 0 / 解答 0</p><div id="practice-review-list" class="note" aria-live="polite">間違えた問題はここから復習できます。</div>
 </section>
 </main><footer>PASS JUKEN ACADEMY · 学びを一歩ずつ</footer>
 <script>
@@ -77,14 +77,15 @@ const qs=[
 {u:"log",q:"log₂8 の値は？",c:["2","3","4","8"],a:1,e:"2³=8 なので log₂8=3。"},
 {u:"log",q:"log₃(x−1) を実数で定義するための条件は？",c:["x≥1","x>1","x<1","x≠1"],a:1,e:"真数は正なので x−1>0、つまり x>1。"}
 ];
-let current=null,picked=null,answered=false,correct=0,total=0,queue=[];
+let current=null,picked=null,answered=false,correct=0,total=0,queue=[],missed=new Map();
 const pu=document.getElementById('practice-unit'),pq=document.getElementById('practice-question'),pc=document.getElementById('practice-choices'),pf=document.getElementById('practice-feedback'),ps=document.getElementById('practice-score'),pcount=document.getElementById('practice-count');
 function newQueue(){const key=pu.value;queue=qs.filter(x=>key==='all'||x.u===key);for(let i=queue.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[queue[i],queue[j]]=[queue[j],queue[i]];}}
 function next(){if(!queue.length)newQueue();current=queue.pop();picked=null;answered=false;pq.textContent=current.q;pc.innerHTML="";current.c.forEach((v,i)=>{const b=document.createElement('button');b.type='button';b.textContent=String.fromCharCode(65+i)+". "+v;b.addEventListener('click',()=>{if(answered)return;picked=i;pc.querySelectorAll('button').forEach(x=>x.style.outline='');b.style.outline='3px solid #265bd6';});pc.appendChild(b);});pf.textContent="選択肢を選んで「採点する」を押そう。";pcount.textContent="今回の範囲："+(pu.options[pu.selectedIndex].text)+" · 残り "+queue.length+" 問（1周したらシャッフル）";}
-document.getElementById('practice-check').addEventListener('click',()=>{if(answered)return;if(picked===null){pf.textContent="先に選択肢を選んでね。";return;}answered=true;total++;if(picked===current.a)correct++;pf.innerHTML=(picked===current.a?"<strong>正解！</strong> ":"<strong>不正解。</strong> ")+current.e;pf.style.background=picked===current.a?"#e9f8ee":"#fff3e8";ps.textContent="正解 "+correct+" / 解答 "+total+"（正答率 "+Math.round(correct/total*100)+"%）";});
+document.getElementById('practice-check').addEventListener('click',()=>{if(answered)return;if(picked===null){pf.textContent="先に選択肢を選んでね。";return;}answered=true;total++;if(picked===current.a){correct++;missed.delete(current.q)}else{missed.set(current.q,current)}document.getElementById('practice-review-list').innerHTML=missed.size?'<strong>復習リスト（'+missed.size+'問）</strong><ol>'+Array.from(missed.keys()).map(q=>'<li>'+q+'</li>').join('')+'</ol>':'間違えた問題はまだありません。';pf.innerHTML=(picked===current.a?"<strong>正解！</strong> ":"<strong>不正解。</strong> ")+current.e;pf.style.background=picked===current.a?"#e9f8ee":"#fff3e8";ps.textContent="正解 "+correct+" / 解答 "+total+"（正答率 "+Math.round(correct/total*100)+"%）";});
 document.getElementById('practice-next').addEventListener('click',next);
+document.getElementById('practice-review').addEventListener('click',()=>{if(!missed.size){document.getElementById('practice-review-list').textContent='復習する問題はありません。まずは演習に挑戦しよう！';return;}queue.push(...Array.from(missed.values()).reverse());next();pf.textContent='復習モード：間違えた問題にもう一度挑戦しよう。';});
 pu.addEventListener('change',()=>{newQueue();next();});
-document.getElementById('practice-reset').addEventListener('click',()=>{correct=0;total=0;ps.textContent="正解 0 / 解答 0";newQueue();next();});
+document.getElementById('practice-reset').addEventListener('click',()=>{correct=0;total=0;missed.clear();document.getElementById('practice-review-list').textContent='間違えた問題はここから復習できます。';ps.textContent="正解 0 / 解答 0";newQueue();next();});
 newQueue();next();
 })();
 </script>
