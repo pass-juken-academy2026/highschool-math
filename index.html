@@ -143,7 +143,32 @@ newQueue();next();
 })();
 </script>
 
-<style id="unified-dark-theme">:root{color-scheme:dark}html,body{background:#071426!important;color:#edf5ff!important}body{background-image:radial-gradient(ellipse at top right,#14345a 0,transparent 48%)!important}main,section,article,.card,.panel,.container,.content,.box,fieldset,details{color:#edf5ff}.card,.panel,.box,article,fieldset,details,#unified-study-cards .study-card{background:#10233d!important;border:1px solid #294563!important;border-radius:16px!important;box-shadow:0 8px 24px #0003}p,li,small,.muted,.description{color:#c3d5e9}h1,h2,h3,h4,strong{color:#f3f8ff}a{color:#7bdcff}button,input,select,textarea{font:inherit;border-radius:10px}button{background:#17658b!important;color:#fff!important;border:1px solid #438bb0!important;padding:.65rem 1rem;cursor:pointer}input,select,textarea{background:#091a2e!important;color:#f3f8ff!important;border:1px solid #355575!important;padding:.65rem}hr{border-color:#294563}#unified-study-cards{background:transparent!important;color:#edf5ff!important;padding:24px 0}</style></body></html>
+<style id="unified-dark-theme">:root{color-scheme:dark}html,body{background:#071426!important;color:#edf5ff!important}body{background-image:radial-gradient(ellipse at top right,#14345a 0,transparent 48%)!important}main,section,article,.card,.panel,.container,.content,.box,fieldset,details{color:#edf5ff}.card,.panel,.box,article,fieldset,details,#unified-study-cards .study-card{background:#10233d!important;border:1px solid #294563!important;border-radius:16px!important;box-shadow:0 8px 24px #0003}p,li,small,.muted,.description{color:#c3d5e9}h1,h2,h3,h4,strong{color:#f3f8ff}a{color:#7bdcff}button,input,select,textarea{font:inherit;border-radius:10px}button{background:#17658b!important;color:#fff!important;border:1px solid #438bb0!important;padding:.65rem 1rem;cursor:pointer}input,select,textarea{background:#091a2e!important;color:#f3f8ff!important;border:1px solid #355575!important;padding:.65rem}hr{border-color:#294563}#unified-study-cards{background:transparent!important;color:#edf5ff!important;padding:24px 0}</style><script id="study-start-fallback-20261010">
+(function(){
+ if(window.__studyStartFallback20261010)return;window.__studyStartFallback20261010=true;
+ document.addEventListener('click',function(event){
+  var button=event.target&&event.target.closest?event.target.closest('#unified-study-cards button[data-mode]'):null;if(!button)return;
+  var root=button.closest('#unified-study-cards'),topic=root&&root.querySelector('#card-topic'),work=root&&root.querySelector('#card-work');if(!root||!topic||!work)return;
+  event.preventDefault();event.stopImmediatePropagation();
+  var mode=Number(button.getAttribute('data-mode')),subject=topic.value||'選択した分野',names=['① 公式・覚え方','② 裏技・覚え方','③ 正誤問題','④ 基本問題','⑤ 証明問題','⑥ 図形・資料問題','⑦ 模擬テスト・弱点分析','⑧ 共通テスト型演習'];
+  var q='',a='',why='',choices=null,correct=0;
+  if(mode===0){q=subject+'で最初に確認することは？';a='用語・公式の意味と使える条件';why='暗記だけでなく、どんな場面で使うかを例と一緒に確認しよう。'}
+  else if(mode===1){q='裏技や速く解く方法を使う前に確認することは？';a='適用条件を満たしているか';why='便利な方法も条件が合う場合にだけ使える。条件外なら基本の方法に戻ろう。'}
+  else if(mode===2){q='「公式や用語は、条件を確認せずどんな問題にも使える」';choices=['正しい','誤り'];correct=1;why='公式・用語・法則には使える範囲や条件があるため、確認が必要です。'}
+  else if(mode===3){q=subject+'の基本問題で最初に整理することは？';choices=['問題の条件と求めるもの','答えだけ','数字だけ','選択肢の長さ'];correct=0;why='条件とゴールを整理すると、使う知識を選びやすくなります。'}
+  else if(mode===4){q='説明・証明の基本の流れは？';a='条件・主張を確認し、根拠を示して結論につなぐ';why='用語や法則、資料などの根拠を明示して、論理の飛躍を避けよう。'}
+  else if(mode===5){q=subject+'の図・資料問題で最初に見ることは？';choices=['設問の要求と資料の単位・条件','図の色だけ','選択肢の長さ','問題番号だけ'];correct=0;why='設問で何を問われているかを把握し、資料の根拠と照らし合わせよう。'}
+  else if(mode===6){q='模擬テストを解いた後に大切なことは？';choices=['間違えた分野を記録して解き直す','点数だけ見て終える','解説を読まない','苦手問題を飛ばす'];correct=0;why='間違いの原因を分類して、同じ分野を復習しよう。'}
+  else{q='共通テスト型の問題で最初にすることは？';choices=['設問の要求・条件・資料を確認する','選択肢の長さだけ比べる','問題番号だけ見る','勘で選ぶ'];correct=0;why='設問の要求を読み、資料や本文から根拠を探して判断しよう。'}
+  work.replaceChildren();var h=document.createElement('h3');h.textContent=subject+'｜'+(names[mode]||names[0]);work.appendChild(h);var p=document.createElement('p');p.textContent='問題：'+q;work.appendChild(p);
+  if(choices){var box=document.createElement('div');box.className='choices';choices.forEach(function(choice,index){var b=document.createElement('button');b.type='button';b.textContent=(index+1)+'. '+choice;b.addEventListener('click',function(){if(box.dataset.answered)return;box.dataset.answered='1';Array.from(box.querySelectorAll('button')).forEach(function(x){x.disabled=true;});var result=document.createElement('div');result.className='answer';var st=document.createElement('strong');st.textContent=index===correct?'正解！':'不正解';result.appendChild(st);var p1=document.createElement('p');p1.textContent='正解：'+choices[correct];result.appendChild(p1);var p2=document.createElement('p');p2.textContent='解説：'+why;result.appendChild(p2);work.appendChild(result);});box.appendChild(b);});work.appendChild(box)}
+  else{var reveal=document.createElement('button');reveal.type='button';reveal.textContent='答え・解説を見る';reveal.addEventListener('click',function(){if(reveal.disabled)return;var result=document.createElement('div');result.className='answer';var p1=document.createElement('p');p1.textContent='答え：'+a;var p2=document.createElement('p');p2.textContent='解説：'+why;result.appendChild(p1);result.appendChild(p2);work.appendChild(result);reveal.disabled=true;});work.appendChild(reveal)}
+  work.scrollIntoView({behavior:'auto',block:'nearest'});
+ },true);
+})();
+</script>
+
+</body></html>
 <style id="mobile-tap-guard">html,body{touch-action:pan-y}
 button,a,[role="button"],input,select,textarea{touch-action:manipulation}
 button:disabled{cursor:not-allowed}</style>
