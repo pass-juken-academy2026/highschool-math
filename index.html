@@ -161,7 +161,7 @@ newQueue();next();
   const card=button.closest('.modecard, .study-card, article');
   const label=(card&&card.querySelector('h3')?card.querySelector('h3').textContent:button.textContent||'学習').trim();
   const mode=/共通テスト/.test(label)?'common':/模擬テスト|弱点分析/.test(label)?'mock':'basic';
-  const url=new URL('./practice.html',location.href);url.searchParams.set('mode',mode);url.searchParams.set('topic',topic);url.searchParams.set('label',label);url.searchParams.set('autostart','1');location.assign(url.href);
+  const url=new URL('./practice.html',location.href);url.searchParams.set('mode',mode);url.searchParams.set('topic',topic);url.searchParams.set('label',label);location.assign(url.href);
  },true);
 })();
 </script>
