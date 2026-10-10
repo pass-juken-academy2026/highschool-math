@@ -3,6 +3,29 @@
 <style>
 :root{color-scheme:dark;--bg:#071426;--panel:#10233d;--line:#294563;--txt:#edf5ff;--muted:#c3d5e9;--accent:#7bdcff}
 *{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at top right,#14345a 0,transparent 48%),var(--bg);color:var(--txt);font:16px/1.65 system-ui,sans-serif}main{max-width:900px;margin:auto;padding:22px}h1{font-size:clamp(2rem,7vw,3.2rem);line-height:1.2}.muted{color:var(--muted)}.panel{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:20px;margin:18px 0}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.subject{display:flex;gap:10px;align-items:center;border:1px solid #355575;border-radius:12px;padding:14px;background:#091a2e;font-weight:800}.subject input{width:22px;height:22px;accent-color:#7bdcff}.units{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.unit{display:flex;gap:9px;align-items:flex-start;padding:12px;border-radius:10px;background:#091a2e;border:1px solid #294563}.unit input{margin-top:5px;accent-color:#7bdcff}button{font:inherit;font-weight:800;border-radius:10px;padding:13px 18px;border:1px solid #438bb0;background:#17658b;color:#fff;cursor:pointer;min-height:48px;width:100%}.disabled{opacity:.45}@media(max-width:540px){main{padding:14px}.panel{padding:15px}.grid,.units{grid-template-columns:1fr}}
+</style><style id="responsive-layout-polish">
+/* Responsive layout and touch-target polish; content and learning data are unchanged. */
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%;scroll-padding-top:5rem}
+body{max-width:100%;overflow-wrap:anywhere}
+img,svg,canvas,video{max-width:100%;height:auto}
+button,input,select,textarea{font:inherit;max-width:100%;min-width:0}
+button,a,[role="button"]{touch-action:manipulation}
+button{min-height:42px}
+:where(button,a,input,select,textarea,[role="button"],[tabindex]):focus-visible{outline:3px solid #65c9f1;outline-offset:3px}
+@media(max-width:640px){
+  body{font-size:16px;line-height:1.65}
+  header,main{padding-left:max(16px,env(safe-area-inset-left))!important;padding-right:max(16px,env(safe-area-inset-right))!important}
+  h1{font-size:clamp(1.55rem,7vw,2.25rem)!important;line-height:1.2}
+  h2{font-size:clamp(1.15rem,5vw,1.45rem)}
+  .grid,.cards,.subject-grid,.subjects,.menu-grid,.topic-grid,.cards-grid,.dashboard,.two-col,.three-col{grid-template-columns:minmax(0,1fr)!important}
+  .card,.panel,.topic-card,.menu-card{min-width:0;overflow-wrap:anywhere}
+  button{min-height:44px}
+  .choices button{width:100%;text-align:left;white-space:normal}
+  table{display:block;max-width:100%;overflow-x:auto}
+  pre,code{overflow-wrap:anywhere;white-space:pre-wrap}
+  input,select,textarea{font-size:16px}
+}
 </style></head><body><main><p class="muted">PASS JUKEN ACADEMY · 高校数学</p><h1>高校数学 学習メニュー</h1><p class="muted">① 数学の科目を選ぶ → ② 学習する単元を選ぶ → ③ 学習方法を選んで始める。選んだ範囲だけを学習できます。</p>
 <section class="panel"><h2>① 科目を選択</h2><p class="muted">複数選択できます。</p><div class="grid" id="subjects">
 <label class="subject"><input type="checkbox" value="1">数学Ⅰ</label><label class="subject"><input type="checkbox" value="A">数学A</label>
