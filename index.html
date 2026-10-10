@@ -149,6 +149,7 @@ newQueue();next();
  document.addEventListener('click',function(event){
   var button=event.target&&event.target.closest?event.target.closest('#unified-study-cards button[data-mode]'):null;if(!button)return;
   var root=button.closest('#unified-study-cards'),topic=root&&root.querySelector('#card-topic'),work=root&&root.querySelector('#card-work');if(!root||!topic||!work)return;
+  var label=(button.textContent||"")+" "+(button.getAttribute("aria-label")||"");if(/模擬テスト|弱点分析|共通テスト型演習|共通テスト風演習/.test(label)){event.preventDefault();event.stopImmediatePropagation();var m=/模擬テスト|弱点分析/.test(label)?"mock":"common";window.location.href="./practice.html?mode="+m+"&autostart=1";return;}
   event.preventDefault();event.stopImmediatePropagation();
   var mode=Number(button.getAttribute('data-mode')),subject=topic.value||'選択した分野',names=['① 公式・覚え方','② 裏技・覚え方','③ 正誤問題','④ 基本問題','⑤ 証明問題','⑥ 図形・資料問題','⑦ 模擬テスト・弱点分析','⑧ 共通テスト型演習'];
   var q='',a='',why='',choices=null,correct=0;
