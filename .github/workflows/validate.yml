@@ -57,7 +57,7 @@ jobs:
         run: |
           python - <<'PY'
           from pathlib import Path
-          import sys
+          import re, sys
           home = Path('index.html').read_text(encoding='utf-8')
           practice = Path('practice.html').read_text(encoding='utf-8')
           required_home = [
