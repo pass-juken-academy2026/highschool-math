@@ -76,7 +76,20 @@ jobs:
               print('Missing Stage 2 mathematics coverage:')
               print('\n'.join(missing))
               sys.exit(1)
-          print(f'Checked {len(required_home) + len(required_practice)} Stage 2 mathematics coverage markers')
+          practice = Path('practice.html').read_text(encoding='utf-8')
+          record_re = re.compile(r'\["([^"]*)",\[(.*?)\],(\d+),"([^"]*)"\]')
+          records = record_re.findall(practice)
+          for n, (_, raw_choices, raw_answer, explanation) in enumerate(records, 1):
+              choices = re.findall(r'"([^"]*)"', raw_choices)
+              if len(choices) < 2 or int(raw_answer) >= len(choices) or not explanation.strip():
+                  missing.append(f'practice question {n}: invalid choices/answer/explanation')
+          if len(records) < 45:
+              missing.append(f'expected at least 45 math question records, found {len(records)}')
+          if missing:
+              print('Stage 2 mathematics validation errors:')
+              print('\n'.join(missing))
+              sys.exit(1)
+          print(f'Stage 2 mathematics coverage OK; validated {len(records)} question records')
           PY
       - name: Validate Stage 2 mathematics answer data
         shell: bash
