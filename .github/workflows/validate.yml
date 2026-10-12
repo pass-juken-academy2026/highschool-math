@@ -78,3 +78,28 @@ jobs:
               sys.exit(1)
           print(f'Checked {len(required_home) + len(required_practice)} Stage 2 mathematics coverage markers')
           PY
+      - name: Validate Stage 2 mathematics answer data
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re, sys
+          source = Path('practice.html').read_text(encoding='utf-8')
+          pattern = re.compile(r'\["((?:\\.|[^"\\])*)",\[((?:\\.|[^\]])*)\],(\d+),"((?:\\.|[^"\\])*)"\]')
+          records = pattern.findall(source)
+          errors = []
+          for n, (_, raw_choices, raw_answer, explanation) in enumerate(records, 1):
+              choices = re.findall(r'"((?:\\.|[^"\\])*)"', raw_choices)
+              answer = int(raw_answer)
+              if len(choices) < 2 or answer < 0 or answer >= len(choices):
+                  errors.append(f'question {n}: choices={len(choices)}, answer index={answer}')
+              if len(explanation.strip()) < 8:
+                  errors.append(f'question {n}: missing or too-short explanation')
+          if len(records) < 60:
+              errors.append(f'expected at least 60 question records, found {len(records)}')
+          if errors:
+              print('Invalid Stage 2 mathematics answer data:')
+              print('\n'.join(errors))
+              sys.exit(1)
+          print(f'Validated {len(records)} mathematics question records: answer indices and explanations OK')
+          PY
