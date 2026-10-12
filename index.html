@@ -21,7 +21,7 @@ const map={
 };
 const units=document.getElementById("units");
 const unitAliases={"図形と計量":"三角比 正弦 余弦 正接","数と式・二次方程式":"因数分解 方程式 実数","二次関数・グラフ":"放物線 最大値 最小値 頂点","確率・場合の数":"組合せ 順列 確率","データ分析":"分散 標準偏差 四分位数","数列・ベクトル":"等差 等比 ベクトル 内積","三角関数":"sin cos tan ラジアン 加法定理","指数・対数関数":"指数 対数 log","微分・積分":"微分 積分 導関数 原始関数","極限":"lim 収束 発散","微分法":"導関数 接線 増減","積分法":"定積分 不定積分 面積","複素数平面":"偏角 絶対値 極形式","平面上の曲線":"楕円 双曲線 放物線","図形と方程式":"直線 円 軌跡","複素数と方程式":"虚数 共役複素数"};
-function normUnit(v){return String(v||"").normalize("NFKC").toLowerCase().replace(/[\\s・･‐‑–—ー]/g,"")}
+function normUnit(v){return String(v||"").normalize("NFKC").toLowerCase().replace(/[\s・･‐‑–—ー]/g,"")}
 function renderUnits(){const selected=[...document.querySelectorAll('#subjects input:checked')].map(x=>x.value);const all=new Map();selected.forEach(s=>(map[s]||[]).forEach(([label,value])=>all.set(label,value)));units.innerHTML=all.size?[...all].map(([label,value])=>'<label class="unit"><input type="checkbox" name="unit" value="'+value+'"><span>'+label+'</span></label>').join(""):'<p class="muted">先に科目を選んでください。</p>';filterUnitLabels();}
 function filterUnitLabels(){const q=normUnit(document.getElementById("unitSearch").value);units.querySelectorAll("label.unit").forEach(label=>{const name=label.querySelector("span")?.textContent||"",value=label.querySelector("input")?.value||"";label.style.display=!q||normUnit(name+" "+value+" "+(unitAliases[name]||"")).includes(q)?"":"none"});}
 document.querySelectorAll('#subjects input').forEach(x=>x.addEventListener('change',renderUnits));document.getElementById("unitSearch").addEventListener("input",filterUnitLabels);
