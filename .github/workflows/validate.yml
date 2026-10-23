@@ -91,6 +91,59 @@ jobs:
               sys.exit(1)
           print(f'Stage 2 mathematics coverage OK; validated {len(records)} question records')
           PY
+      - name: Detect duplicate mathematics questions and formulas
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          from collections import defaultdict
+          import re, sys, unicodedata
+          practice = Path('practice.html').read_text(encoding='utf-8')
+          formulas = Path('formulas.html').read_text(encoding='utf-8')
+          question_pattern = re.compile(r'\["((?:\\.|[^"\\])*)",\[((?:\\.|[^\]])*)\],(\d+),"((?:\\.|[^"\\])*)"\]')
+          bank_match = re.search(r'const BANK=(\[\[.*?\]\]);', practice, re.S)
+          if not bank_match:
+              print('Could not locate mathematics question bank')
+              sys.exit(1)
+          questions = question_pattern.findall(bank_match.group(1))
+          def normalize(text):
+              text = unicodedata.normalize('NFKC', text).casefold()
+              return re.sub(r'\s+', '', text)
+          by_question = defaultdict(list)
+          for number, record in enumerate(questions, 1):
+              by_question[normalize(record[0])].append((number, record[0]))
+          duplicates = [group for key, group in by_question.items() if key and len(group) > 1]
+          if duplicates:
+              print('Duplicate mathematics question prompts found:')
+              for group in duplicates:
+                  print(' | '.join(f'#{n}: {q}' for n, q in group))
+          # Formula rows contain unit, title, equation, meaning, conditions, example, and mnemonic.
+          data_start = formulas.find('const data=[')
+          data_end = formulas.find('];', data_start)
+          if data_start < 0 or data_end < 0:
+              print('Could not locate mathematics formula data')
+              sys.exit(1)
+          data = formulas[data_start:data_end + 2]
+          formula_pattern = re.compile(r'\["((?:\\.|[^"\\])*)","((?:\\.|[^"\\])*)","((?:\\.|[^"\\])*)","((?:\\.|[^"\\])*)","((?:\\.|[^"\\])*)","((?:\\.|[^"\\])*)","((?:\\.|[^"\\])*)"\]')
+          rows = formula_pattern.findall(data)
+          by_formula = defaultdict(list)
+          for number, row in enumerate(rows, 1):
+              unit, title, equation, meaning, conditions, example, mnemonic = row
+              key = normalize(unit) + '::' + normalize(title)
+              by_formula[key].append((number, unit, title))
+              if not all(value.strip() for value in row):
+                  print(f'Formula row {number} has an empty field')
+                  sys.exit(1)
+          formula_duplicates = [group for key, group in by_formula.items() if key and len(group) > 1]
+          if duplicates or formula_duplicates:
+              for group in formula_duplicates:
+                  print('Duplicate formula entries: ' + ' | '.join(f'#{n}: {u} / {t}' for n, u, t in group))
+              sys.exit(1)
+          if len(questions) < 60 or len(rows) < 150:
+              print(f'Unexpected content coverage: questions={len(questions)}, formulas={len(rows)}')
+              sys.exit(1)
+          print(f'No duplicate question prompts among {len(questions)} questions; checked {len(rows)} complete, unique formula entries.')
+          PY
       - name: Validate Stage 2 mathematics answer data
         shell: bash
         run: |
