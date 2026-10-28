@@ -169,3 +169,5 @@ jobs:
               sys.exit(1)
           print(f'Validated {len(records)} mathematics question records: answer indices and explanations OK')
           PY
+      - name: Check common-test structure and stimulus links
+        run: node tests/common-test-audit.cjs
