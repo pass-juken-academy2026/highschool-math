@@ -25,7 +25,7 @@ const { chromium } = require('playwright');
     assert.doesNotMatch(content, /正解：/);
     assert.doesNotMatch(content, /解答・解説/);
     assert.match(content, /文化祭|参加|売上|円|データ/);
-    await popup.close();
+    const pdf1 = await popup.pdf({ format: 'A4' }); assert.equal(pdf1.subarray(0, 4).toString(), '%PDF'); assert.ok(pdf1.length > 1000); const pdf2 = await popup.pdf({ format: 'A4' }); assert.equal(pdf2.subarray(0, 4).toString(), '%PDF'); assert.ok(pdf2.length > 1000); const pdf3 = await popup.pdf({ format: 'A4' }); assert.equal(pdf3.subarray(0, 4).toString(), '%PDF'); assert.ok(pdf3.length > 1000); await popup.close();
 
     popup = await openExport('#pdfAnswers');
     content = await popup.locator('body').innerText();
