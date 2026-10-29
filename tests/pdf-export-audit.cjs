@@ -41,6 +41,23 @@ const { chromium } = require('playwright');
     assert.match(content, /正解：/);
     await popup.close();
 
+
+    await page.context().grantPermissions(['clipboard-read', 'clipboard-write']);
+    const copyText = async (button) => {
+      await page.click(button);
+      await page.waitForFunction(() => (document.querySelector('#copyTextStatus')?.textContent || '').includes('コピーしました'));
+      return page.evaluate(() => navigator.clipboard.readText());
+    };
+    const questionsCopy = await copyText('#copyQuestions');
+    assert.match(questionsCopy, /問題/);
+    assert.doesNotMatch(questionsCopy, /正解：|解答・解説/);
+    const answersCopy = await copyText('#copyAnswers');
+    assert.match(answersCopy, /正解：/);
+    assert.match(answersCopy, /解説：/);
+    const combinedCopy = await copyText('#copyCombined');
+    assert.match(combinedCopy, /問題/);
+    assert.match(combinedCopy, /解答・解説/);
+    assert.match(combinedCopy, /正解：/);
     console.log('PASS PDF export browser checks: question-only, answer-only, combined');
   } finally {
     await browser.close();
