@@ -42,6 +42,16 @@ ADVANCED_MATH_QUESTIONS.push(
 ["【発展・図形と方程式】点P(x,y)がx²+y²=25上にある。x+yの最大値は？",["5","5√2","10","25"],1,"Cauchy–Schwarzよりx+y≤√(1²+1²)√(x²+y²)=5√2。x=y=5/√2で等号成立するので最大5√2。",3],
 ["【発展・積分と面積】放物線y=x²と直線y=2xで囲まれる領域の面積は？",["2/3","4/3","1","8/3"],1,"交点はx²=2xよりx=0,2。0≤x≤2では2x≥x²。面積∫₀²(2x−x²)dx=[x²−x³/3]₀²=4−8/3=4/3。",3]
 );
+ADVANCED_MATH_QUESTIONS.push(
+["【発展・対数不等式】log₂(x−1)+log₂(5−x)≥2を満たす実数xは？",["x=3","2≤x≤4","1<x<5","x=2またはx=4"],0,"真数条件より1<x<5。左辺をまとめてlog₂((x−1)(5−x))≥2。底2は1より大きいため(x−1)(5−x)≥4。整理すると−x²+6x−5≥4、すなわち(x−3)²≤0となる。したがってx=3のみ。",3],
+["【発展・条件付き確率】赤玉3個、青玉2個の袋から戻さず2回取り出す。1回目が青だったとき、2回目が赤である確率は？",["1/2","2/3","3/4","3/5"],2,"1回目が青と分かった後、袋には赤3個・青1個が残る。よって2回目が赤の確率は3/4。",3],
+["【発展・微分と増減】f(x)=x³−3x²+2の増減について正しいものは？",["全区間で増加","x<0とx>2で増加、0<x<2で減少","x<2で減少、x>2で増加","0<x<2で増加、それ以外で減少"],1,"f'(x)=3x²−6x=3x(x−2)。符号はx<0で正、0<x<2で負、x>2で正。したがって指定の区間で増減する。",3],
+["【発展・三角方程式】0≤x<2πで2cos²x−1=sinxを満たすxは？",["π/6、5π/6、3π/2","π/6、π/2","π/3、2π/3","π/2のみ"],0,"2cos²x−1=1−2sin²x。t=sinxと置くと1−2t²=t、2t²+t−1=0、(2t−1)(t+1)=0。sinx=1/2または−1。区間内の解はπ/6、5π/6、3π/2。",3],
+["【発展・ベクトルと面積】2つのベクトルa,bの大きさが|a|=3、|b|=4、なす角が60°のとき、平行四辺形の面積は？",["6","6√3","12","12√3"],1,"平行四辺形の面積は|a||b|sinθ。3×4×sin60°=12×√3/2=6√3。",3],
+["【発展・積分と面積】0≤x≤1で曲線y=xとy=x²に囲まれた面積は？",["1/3","1/2","1/6","2/3"],2,"区間内ではx≥x²。面積は∫₀¹(x−x²)dx=[x²/2−x³/3]₀¹=1/2−1/3=1/6。",3],
+["【発展・複素数平面】z=x+yiが|z−2|=|z+2i|を満たすとき、点(x,y)の軌跡は？",["x=y","x+y=0","x−y=2","x+y=2"],1,"両辺を2乗して(x−2)²+y²=x²+(y+2)²。展開・整理すると−4x=4y、よってx+y=0。2点(2,0)、(0,−2)から等距離となる垂直二等分線。",3],
+["【発展・最適化】正の実数x,yがx+y=12を満たすとき、xyの最大値は？",["24","30","36","48"],2,"相加相乗平均よりxy≤((x+y)/2)²=36。x=y=6のとき等号成立し、最大値36。",3]
+);
 BANK.push(...ADVANCED_MATH_QUESTIONS);
 const $=id=>document.getElementById(id);
 function takeUnseenMathQuestions(pool,count,key){const all=pool.map(q=>BANK.indexOf(q)).filter(i=>i>=0);const shuffle=a=>{const out=a.slice();for(let i=out.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[out[i],out[j]]=[out[j],out[i]];}return out;};let remaining=all.slice();try{const saved=JSON.parse(localStorage.getItem(key)||"null");if(Array.isArray(saved)){const valid=[...new Set(saved.filter(i=>all.includes(i)))];if(valid.length)remaining=valid;}}catch(e){}if(!remaining.length)remaining=all.slice();const selected=shuffle(remaining).slice(0,count);const next=remaining.filter(i=>!selected.includes(i));try{if(next.length)localStorage.setItem(key,JSON.stringify(next));else localStorage.removeItem(key);}catch(e){}return selected.map(i=>BANK[i]);}function sortMathCaseQuestions(pool){const number=q=>Number((String(q[0]).match(/問(\d+)/)||[])[1]||0);return pool.slice().sort((a,b)=>(Number(a[4])||0)-(Number(b[4])||0)||number(a)-number(b));}function takeUnseenMathPool(pool,count,key){const id=q=>JSON.stringify(q),shuffle=a=>{const out=a.slice();for(let i=out.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[out[i],out[j]]=[out[j],out[i]];}return out;};let seen=[];try{const saved=JSON.parse(localStorage.getItem(key)||"[]");if(Array.isArray(saved))seen=[...new Set(saved.filter(x=>typeof x==="string"))];}catch(e){}let available=pool.filter(q=>!seen.includes(id(q)));if(!available.length){seen=[];available=pool.slice();}const selected=shuffle(available).slice(0,count);seen=seen.concat(selected.map(id));try{localStorage.setItem(key,JSON.stringify(seen));}catch(e){}return selected;}let questions=[],idx=0,answers=[],locked=false,reviewOnly=false;
